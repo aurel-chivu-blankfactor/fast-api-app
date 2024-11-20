@@ -1,15 +1,15 @@
 from pydantic import BaseModel, UUID4
 
 
-class BaseGroup(BaseModel):
+class GroupBase(BaseModel):
     name: str
 
 
-class CreateGroup(BaseGroup):
+class CreateGroupBase(GroupBase):
     pass
 
 
-class Group(BaseGroup):
+class GroupBase(GroupBase):
     uuid: UUID4
 
     class Config:

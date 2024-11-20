@@ -5,6 +5,7 @@ from app.core.database import get_db
 
 app = FastAPI()
 
+
 @app.get("/health-check")
 def health_check(db: Session = Depends(get_db)):
     try:

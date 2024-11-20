@@ -1,0 +1,14 @@
+from pydantic import UUID4
+from sqlalchemy import Column, String, JSON
+from sqlalchemy import relationship
+from app.core.database import Base
+from app.models.association_tables import user_group
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    uuid = Column(String, primary_key=True, default=lambda: str(UUID4()))
+    name = Column(String, nullable=False)
+    urls = Column(JSON, default=[])
+    groups = relationship("Group", secondary=user_group, back_populates="users")
