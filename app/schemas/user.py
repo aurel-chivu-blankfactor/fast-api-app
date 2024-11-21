@@ -4,14 +4,14 @@ from typing import List, Optional
 
 class UserBase(BaseModel):
     name: str
-    urls: Optional[List[str]]
+    urls: Optional[List[str]] = []
 
 
-class UserBaseCreate(UserBase):
+class UserCreate(UserBase):
     group_uuid: UUID4
 
 
-class UserBase(UserBase):
+class User(UserBase):
     uuid: UUID4
     group_name: str
 
