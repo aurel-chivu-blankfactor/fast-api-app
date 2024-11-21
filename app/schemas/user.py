@@ -17,3 +17,12 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    urls: Optional[List[str]] = None
+    group_uuids: Optional[List[UUID4]] = None
+
+    class Config:
+        orm_mode: True
