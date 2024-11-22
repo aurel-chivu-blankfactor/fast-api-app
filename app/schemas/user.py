@@ -13,7 +13,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     uuid: UUID4
-    group_name: str
+    groups: List[str]
 
     class Config:
         orm_mode = True
@@ -22,7 +22,7 @@ class User(UserBase):
 class UserUpdate(BaseModel):
     name: Optional[str] = None
     urls: Optional[List[str]] = None
-    group_uuids: Optional[List[UUID4]] = None
+    groups: Optional[List[str]] = None
 
     class Config:
         orm_mode: True

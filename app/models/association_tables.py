@@ -7,13 +7,13 @@ user_group = Table(
     Column(
         "user_uuid",
         String,
-        ForeignKey("user.uuid", ondelete="CASCADE"),
+        ForeignKey("user.uuid"),
         primary_key=True,
     ),
     Column(
         "group_uuid",
         String,
-        ForeignKey("group.uuid", ondelete="CASCADE"),
+        ForeignKey("group.uuid"),
         primary_key=True,
     ),
 )
