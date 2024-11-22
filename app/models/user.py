@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy import Column, String, JSON
-from sqlalchemy import relationship
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.models.association_tables import user_group
 
