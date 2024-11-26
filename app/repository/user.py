@@ -14,34 +14,15 @@ def create_user(db: Session, user: UserCreate):
     db.add(user)
     db.commit()
     db.refresh(user)
-    return UserSchema(
-        uuid=user.uuid,
-        name=user.name,
-        urls=user.urls,
-        groups=[g.name for g in user.groups],
-    )
+    return user
 
 
 def get_user(db: Session, user_uuid: UUID):
-    user = db.query(User).filter(User.uuid == str(user_uuid)).first()
-    if user is None:
-        return None
-    return UserSchema(
-        uuid=user.uuid, name=user.name, groups=[group.name for group in user.groups]
-    )
+    return db.query(User).filter(User.uuid == str(user_uuid)).first()
 
 
 def get_users(db: Session):
-    users = db.query(User).all()
-    return [
-        UserSchema(
-            uuid=user.uuid,
-            name=user.name,
-            urls=user.urls,
-            groups=[g.name for g in user.groups],
-        )
-        for user in users
-    ]
+    return db.query(User).all()
 
 
 def update_user(db: Session, user_uuid: UUID, updated_data: dict):
@@ -53,12 +34,7 @@ def update_user(db: Session, user_uuid: UUID, updated_data: dict):
             setattr(user, key, value)
     db.commit()
     db.refresh(user)
-    return UserSchema(
-        uuid=user.uuid,
-        name=user.name,
-        urls=user.urls,
-        groups=[g.name for g in user.groups],
-    )
+    return user
 
 
 def delete_user(db: Session, user_uuid: UUID):
