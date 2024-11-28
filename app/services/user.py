@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import BackgroundTasks
 from app.repository.user import (
     create_user as create_user_repo,
+    update_user_urls,
     get_user as get_user_repo,
     get_users as get_users_repo,
     update_user as update_user_repo,
@@ -8,18 +10,42 @@ from app.repository.user import (
 )
 from app.schemas.user import User, UserCreate, UserUpdate
 from uuid import UUID
+import httpx
 
 
-def create_user(db: Session, user_data: UserCreate):
+async def fetch_github_data(user_uuid: str):
+    github_api_url = "https://api.github.com/"
+    async with httpx.AsyncClient() as client:
+        response = await client.get(github_api_url)
+        response.raise_for_status()
+        data = response.json()
+
+        transformed_data = {
+            key: value.replace("{user}", user_uuid) if isinstance(value, str) else value
+            for key, value in data.items()
+        }
+        return transformed_data
+
+
+async def create_user(
+    db: Session, user_data: UserCreate, background_task: BackgroundTasks
+):
     user = create_user_repo(db, user_data)
+    github_urls = await fetch_github_data(user.uuid)
     if user is None:
         return None
+    background_task.add_task(update_user_urls_task, db, user.uuid)
     return User(
         uuid=user.uuid,
         name=user.name,
-        urls=user.urls,
+        urls=github_urls,
         groups=[g.name for g in user.groups],
     )
+
+
+async def update_user_urls_task(db: Session, user_uuid: UUID):
+    github_urls = await fetch_github_data(str(user_uuid))
+    update_user_urls(db, user_uuid, github_urls)
 
 
 def get_user(db: Session, user_uuid: UUID):

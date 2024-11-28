@@ -1,10 +1,10 @@
 from pydantic import BaseModel, UUID4
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class UserBase(BaseModel):
     name: str
-    urls: Optional[List[str]] = []
+    urls: Optional[Union[dict, list]] = {}
 
 
 class UserCreate(UserBase):
@@ -21,7 +21,7 @@ class User(UserBase):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
-    urls: Optional[List[str]] = None
+    urls: Optional[Union[dict, list]] = None
     groups: Optional[List[str]] = None
 
     class Config:

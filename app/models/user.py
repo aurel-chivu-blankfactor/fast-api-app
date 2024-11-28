@@ -10,5 +10,5 @@ class User(Base):
 
     uuid = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, nullable=False)
-    urls = Column(JSON, default=[])
+    urls = Column(JSON, default={})
     groups = relationship("Group", secondary=user_group, back_populates="users")

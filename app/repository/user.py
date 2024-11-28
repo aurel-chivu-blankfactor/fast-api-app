@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.models.group import Group
-from app.schemas.user import UserCreate, User as UserSchema
+from app.schemas.user import UserCreate
 from uuid import UUID
 
 
@@ -14,6 +14,15 @@ def create_user(db: Session, user: UserCreate):
     db.add(user)
     db.commit()
     db.refresh(user)
+    return user
+
+
+def update_user_urls(db: Session, user_uuid: UUID, urls: dict):
+    user = db.query(User).filter(User.uuid == str(user_uuid)).first()
+    if user is not None:
+        user.urls = urls
+        db.commit()
+        db.refresh(user)
     return user
 
 
