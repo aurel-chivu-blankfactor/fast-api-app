@@ -9,12 +9,12 @@ def create_user(db: Session, user: UserCreate):
     group = db.query(Group).filter(Group.uuid == str(user.group_uuid)).first()
     if group is None:
         return None
-    user = User(name=user.name, urls=user.urls)
-    user.groups.append(group)
-    db.add(user)
+    new_user = User(name=user.name, urls=user.urls)
+    new_user.groups.append(group)
+    db.add(new_user)
     db.commit()
-    db.refresh(user)
-    return user
+    db.refresh(new_user)
+    return new_user
 
 
 def update_user_urls(db: Session, user_uuid: UUID, urls: dict):
