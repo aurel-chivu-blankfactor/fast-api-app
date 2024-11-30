@@ -21,7 +21,7 @@ class User(UserBase):
 
 class UserUpdate(BaseModel):
     name: Optional[str] = None
-    urls: Optional[Union[dict, list]] = None
+    urls: Optional[Union[dict, list]] = {}
     groups: Optional[List[str]] = None
 
     class Config:

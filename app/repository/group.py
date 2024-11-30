@@ -5,11 +5,11 @@ from uuid import UUID
 
 
 def create_group(db: Session, group: GroupCreate):
-    db_group = Group(name=group.name)
-    db.add(db_group)
+    new_group = Group(name=group.name)
+    db.add(new_group)
     db.commit()
-    db.refresh(db_group)
-    return db_group
+    db.refresh(new_group)
+    return new_group
 
 
 def get_group(db: Session, group_uuid: UUID):

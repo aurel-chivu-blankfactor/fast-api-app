@@ -53,7 +53,10 @@ def get_user(db: Session, user_uuid: UUID):
     if user is None:
         return None
     return User(
-        uuid=user.uuid, name=user.name, groups=[group.name for group in user.groups]
+        uuid=user.uuid,
+        name=user.name,
+        urls=user.urls,
+        groups=[group.name for group in user.groups],
     )
 
 
