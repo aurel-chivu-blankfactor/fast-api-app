@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import BackgroundTasks
 from app.repository.user import (
     create_user as create_user_repo,
     update_user_urls,
@@ -27,14 +26,11 @@ async def fetch_github_data(user_uuid: str):
         return transformed_data
 
 
-async def create_user(
-    db: Session, user_data: UserCreate, background_task: BackgroundTasks
-):
+async def create_user(db: Session, user_data: UserCreate):
     user = create_user_repo(db, user_data)
     github_urls = await fetch_github_data(user.uuid)
     if user is None:
         return None
-    background_task.add_task(update_user_urls_task, db, user.uuid)
     return User(
         uuid=user.uuid,
         name=user.name,

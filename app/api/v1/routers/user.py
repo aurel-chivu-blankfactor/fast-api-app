@@ -9,6 +9,7 @@ from app.services.user import (
     get_users as get_users_service,
     update_user as update_user_service,
     delete_user as delete_user_service,
+    update_user_urls_task,
 )
 
 router = APIRouter(prefix="/user", tags=["users"])
@@ -17,10 +18,11 @@ router = APIRouter(prefix="/user", tags=["users"])
 @router.post("/", response_model=User)
 async def create_user(
     user_data: UserCreate,
-    background_tasks: BackgroundTasks,
+    background_task: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
-    user = await create_user_service(db, user_data, background_tasks)
+    user = await create_user_service(db, user_data)
+    background_task.add_task(update_user_urls_task, db, user.uuid)
     if user is None:
         raise HTTPException(status_code=400, detail="Invalid group UUID")
     return user
