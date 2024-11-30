@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column, ForeignKey, String
-from app.core.database import Base
+from app.database.database import Base
 
 user_group = Table(
     "user_group",

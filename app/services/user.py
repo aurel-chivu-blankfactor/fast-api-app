@@ -18,7 +18,6 @@ async def fetch_github_data(user_uuid: str):
         response = await client.get(github_api_url)
         response.raise_for_status()
         data = response.json()
-
         transformed_data = {
             key: value.replace("{user}", user_uuid) if isinstance(value, str) else value
             for key, value in data.items()
@@ -29,8 +28,6 @@ async def fetch_github_data(user_uuid: str):
 async def create_user(db: Session, user_data: UserCreate):
     user = create_user_repo(db, user_data)
     github_urls = await fetch_github_data(user.uuid)
-    if user is None:
-        return None
     return User(
         uuid=user.uuid,
         name=user.name,
@@ -40,14 +37,15 @@ async def create_user(db: Session, user_data: UserCreate):
 
 
 async def update_user_urls_task(db: Session, user_uuid: UUID):
-    github_urls = await fetch_github_data(str(user_uuid))
-    update_user_urls(db, user_uuid, github_urls)
+    try:
+        github_urls = await fetch_github_data(str(user_uuid))
+        update_user_urls(db, user_uuid, github_urls)
+    finally:
+        db.close()
 
 
 def get_user(db: Session, user_uuid: UUID):
     user = get_user_repo(db, user_uuid)
-    if user is None:
-        return None
     return User(
         uuid=user.uuid,
         name=user.name,
@@ -71,8 +69,6 @@ def get_users(db: Session):
 
 def update_user(db: Session, user_uuid: UUID, user_update: UserUpdate):
     user = update_user_repo(db, user_uuid, user_update.model_dump(exclude_unset=True))
-    if user is None:
-        return None
     return User(
         uuid=user.uuid,
         name=user.name,
@@ -83,8 +79,6 @@ def update_user(db: Session, user_uuid: UUID, user_update: UserUpdate):
 
 def delete_user(db: Session, user_uuid: UUID):
     user = delete_user_repo(db, user_uuid)
-    if user is None:
-        return None
     return User(
         uuid=user.uuid,
         name=user.name,

@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+
+from app.exceptions.GroupNotFoundException import GroupNotFoundException
 from app.models.group import Group
 from app.schemas.group import GroupCreate
 from uuid import UUID
@@ -13,7 +15,10 @@ def create_group(db: Session, group: GroupCreate):
 
 
 def get_group(db: Session, group_uuid: UUID):
-    return db.query(Group).filter(Group.uuid == str(group_uuid)).first()
+    group = db.query(Group).filter(Group.uuid == str(group_uuid)).first()
+    if group is None:
+        raise GroupNotFoundException(str(group_uuid))
+    return group
 
 
 def get_groups(db: Session):
@@ -23,7 +28,7 @@ def get_groups(db: Session):
 def update_group(db: Session, group_uuid: UUID, updated_data: dict):
     group = db.query(Group).filter(Group.uuid == str(group_uuid)).first()
     if group is None:
-        return None
+        raise GroupNotFoundException(str(group_uuid))
     for key, value in updated_data.items():
         if value is not None:
             setattr(group, key, value)
@@ -35,7 +40,7 @@ def update_group(db: Session, group_uuid: UUID, updated_data: dict):
 def delete_group(db: Session, group_uuid: UUID):
     group = db.query(Group).filter(Group.uuid == str(group_uuid)).first()
     if group is None:
-        return None
+        raise GroupNotFoundException(str(group_uuid))
     db.delete(group)
     db.commit()
     return group

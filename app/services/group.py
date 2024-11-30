@@ -19,8 +19,6 @@ def create_group(db: Session, group_data: GroupCreate):
 
 def get_group(db: Session, group_uuid: UUID):
     group = get_group_repo(db, group_uuid)
-    if group is None:
-        return None
     return Group(
         uuid=group.uuid, name=group.name, users=[user.name for user in group.users]
     )
@@ -40,8 +38,6 @@ def update_group(db: Session, group_uuid: UUID, group_update: GroupUpdate):
     group = update_group_repo(
         db, group_uuid, group_update.model_dump(exclude_unset=True)
     )
-    if group is None:
-        return None
     return Group(
         uuid=group_uuid, name=group.name, users=[user.name for user in group.users]
     )
@@ -49,8 +45,6 @@ def update_group(db: Session, group_uuid: UUID, group_update: GroupUpdate):
 
 def delete_group(db: Session, group_uuid: UUID):
     group = delete_group_repo(db, group_uuid)
-    if group is None:
-        return None
     return Group(
         uuid=group.uuid, name=group.name, users=[user.name for user in group.users]
     )

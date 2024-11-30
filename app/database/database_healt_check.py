@@ -1,5 +1,5 @@
 from sqlalchemy import text
-from app.core.database import SessionLocal
+from app.database.database import SessionLocal
 from app.utils.custom_logger import logger
 
 
