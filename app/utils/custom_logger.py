@@ -4,7 +4,7 @@ from colorama import Fore, Style
 
 class CustomFormatter(logging.Formatter):
 
-    def format(self, record):
+    def format(self, record) -> str:
         if record.levelname == "INFO":
             record.levelname = f"{Fore.GREEN}{record.levelname}{Style.RESET_ALL}"
         elif record.levelname == "WARNING":

@@ -10,21 +10,21 @@ from app.schemas.group import Group, GroupCreate, GroupUpdate
 from uuid import UUID
 
 
-def create_group(db: Session, group_data: GroupCreate):
+def create_group(db: Session, group_data: GroupCreate) -> Group:
     group = create_group_repo(db, group_data)
     return Group(
         uuid=group.uuid, name=group.name, users=[user.name for user in group.users]
     )
 
 
-def get_group(db: Session, group_uuid: UUID):
+def get_group(db: Session, group_uuid: UUID) -> Group:
     group = get_group_repo(db, group_uuid)
     return Group(
         uuid=group.uuid, name=group.name, users=[user.name for user in group.users]
     )
 
 
-def get_groups(db: Session):
+def get_groups(db: Session) -> list[Group]:
     groups = get_groups_repo(db)
     return [
         Group(
@@ -34,7 +34,7 @@ def get_groups(db: Session):
     ]
 
 
-def update_group(db: Session, group_uuid: UUID, group_update: GroupUpdate):
+def update_group(db: Session, group_uuid: UUID, group_update: GroupUpdate) -> Group:
     group = update_group_repo(
         db, group_uuid, group_update.model_dump(exclude_unset=True)
     )
@@ -43,7 +43,7 @@ def update_group(db: Session, group_uuid: UUID, group_update: GroupUpdate):
     )
 
 
-def delete_group(db: Session, group_uuid: UUID):
+def delete_group(db: Session, group_uuid: UUID) -> Group:
     group = delete_group_repo(db, group_uuid)
     return Group(
         uuid=group.uuid, name=group.name, users=[user.name for user in group.users]

@@ -3,7 +3,7 @@ from app.database.database import SessionLocal
 from app.utils.custom_logger import logger
 
 
-def check_db_health():
+def check_db_health() -> bool:
     logger.info("Starting database health check...")
     try:
         db = SessionLocal()

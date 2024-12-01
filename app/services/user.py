@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 from app.repository.user import (
     create_user as create_user_repo,
@@ -12,7 +14,7 @@ from uuid import UUID
 import httpx
 
 
-async def fetch_github_data(user_uuid: str):
+async def fetch_github_data(user_uuid: str) -> dict:
     github_api_url = "https://api.github.com/"
     async with httpx.AsyncClient() as client:
         response = await client.get(github_api_url)
@@ -25,7 +27,7 @@ async def fetch_github_data(user_uuid: str):
         return transformed_data
 
 
-async def create_user(db: Session, user_data: UserCreate):
+async def create_user(db: Session, user_data: UserCreate) -> User:
     user = create_user_repo(db, user_data)
     github_urls = await fetch_github_data(user.uuid)
     return User(
@@ -36,7 +38,7 @@ async def create_user(db: Session, user_data: UserCreate):
     )
 
 
-async def update_user_urls_task(db: Session, user_uuid: UUID):
+async def update_user_urls_task(db: Session, user_uuid: UUID) -> None:
     try:
         github_urls = await fetch_github_data(str(user_uuid))
         update_user_urls(db, user_uuid, github_urls)
@@ -44,7 +46,7 @@ async def update_user_urls_task(db: Session, user_uuid: UUID):
         db.close()
 
 
-def get_user(db: Session, user_uuid: UUID):
+def get_user(db: Session, user_uuid: UUID) -> User:
     user = get_user_repo(db, user_uuid)
     return User(
         uuid=user.uuid,
@@ -54,7 +56,7 @@ def get_user(db: Session, user_uuid: UUID):
     )
 
 
-def get_users(db: Session):
+def get_users(db: Session) -> list[User]:
     users = get_users_repo(db)
     return [
         User(
@@ -67,7 +69,7 @@ def get_users(db: Session):
     ]
 
 
-def update_user(db: Session, user_uuid: UUID, user_update: UserUpdate):
+def update_user(db: Session, user_uuid: UUID, user_update: UserUpdate) -> User:
     user = update_user_repo(db, user_uuid, user_update.model_dump(exclude_unset=True))
     return User(
         uuid=user.uuid,
@@ -77,7 +79,7 @@ def update_user(db: Session, user_uuid: UUID, user_update: UserUpdate):
     )
 
 
-def delete_user(db: Session, user_uuid: UUID):
+def delete_user(db: Session, user_uuid: UUID) -> User:
     user = delete_user_repo(db, user_uuid)
     return User(
         uuid=user.uuid,
