@@ -16,7 +16,7 @@ class User(UserBase):
     groups: List[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserUpdate(BaseModel):
@@ -25,4 +25,4 @@ class UserUpdate(BaseModel):
     groups: Optional[List[str]] = None
 
     class Config:
-        orm_mode: True
+        from_attributes = True
