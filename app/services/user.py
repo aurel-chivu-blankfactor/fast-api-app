@@ -39,11 +39,8 @@ async def create_user(db: Session, user_data: UserCreate) -> User:
 
 
 async def update_user_urls_task(db: Session, user_uuid: UUID) -> None:
-    try:
-        github_urls = await fetch_github_data(str(user_uuid))
-        update_user_urls(db, user_uuid, github_urls)
-    finally:
-        db.close()
+    github_urls = await fetch_github_data(str(user_uuid))
+    update_user_urls(db, user_uuid, github_urls)
 
 
 def get_user(db: Session, user_uuid: UUID) -> User:

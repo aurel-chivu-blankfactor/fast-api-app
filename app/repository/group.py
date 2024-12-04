@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy.orm import Session
-from app.exceptions.GroupNotFoundException import GroupNotFoundException
+from app.exceptions.group_not_found_exception import GroupNotFoundException
 from app.models.group import Group
 from app.schemas.group import GroupCreate
 from uuid import UUID

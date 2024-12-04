@@ -1,7 +1,7 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from app.exceptions.GroupNotFoundException import GroupNotFoundException
-from app.exceptions.UserNotFoundException import UserNotFoundException
+from app.exceptions.group_not_found_exception import GroupNotFoundException
+from app.exceptions.user_not_found_exception import UserNotFoundException
 from app.models.user import User
 from app.models.group import Group
 from app.schemas.user import UserCreate
@@ -50,10 +50,8 @@ def update_user(db: Session, user_uuid: UUID, updated_data: dict) -> User:
         group_names = updated_data.pop("groups")
         groups = db.query(Group).filter(Group.name.in_(group_names)).all()
         if len(groups) != len(group_names):
-            missing_groups = set(group_names) - {group.name for group in groups}
             raise GroupNotFoundException(
-                ", ".join(missing_groups),
-                f"One or more groups not found: {', '.join(missing_groups)}",
+                None, "One or more groups not found in the database"
             )
         user.groups = groups
 

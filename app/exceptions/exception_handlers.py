@@ -1,7 +1,7 @@
 from fastapi.responses import JSONResponse
 from fastapi import Request
-from app.exceptions.GroupNotFoundException import GroupNotFoundException
-from app.exceptions.UserNotFoundException import UserNotFoundException
+from app.exceptions.group_not_found_exception import GroupNotFoundException
+from app.exceptions.user_not_found_exception import UserNotFoundException
 
 
 async def user_not_found_exception_handler(

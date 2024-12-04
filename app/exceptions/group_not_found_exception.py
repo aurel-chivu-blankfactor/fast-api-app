@@ -1,5 +1,8 @@
+from typing import Optional
+
+
 class GroupNotFoundException(Exception):
-    def __init__(self, group_uuid: str, custom_message: str = None):
+    def __init__(self, group_uuid: Optional[str], custom_message: str = None):
         if custom_message:
             self.message = custom_message
         else:
