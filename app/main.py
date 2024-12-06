@@ -11,8 +11,6 @@ from app.exceptions.exception_handlers import (
 )
 from app.services.startup import lifespan
 
-initialize_db()
-
 app = FastAPI(lifespan=lifespan)
 
 
