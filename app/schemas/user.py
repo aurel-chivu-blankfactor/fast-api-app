@@ -15,8 +15,7 @@ class User(UserBase):
     uuid: UUID4
     groups: List[str]
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class UserUpdate(BaseModel):
@@ -24,5 +23,4 @@ class UserUpdate(BaseModel):
     urls: Optional[Union[dict, list]] = {}
     groups: Optional[List[str]] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
