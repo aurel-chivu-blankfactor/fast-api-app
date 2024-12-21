@@ -1,7 +1,6 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from app.exceptions.group_not_found_exception import GroupNotFoundException
-from app.exceptions.user_not_found_exception import UserNotFoundException
+from app.exceptions.exceptions import UserNotFoundException, GroupNotFoundException
 from app.models.user import User
 from app.models.group import Group
 from app.schemas.user import UserCreate
