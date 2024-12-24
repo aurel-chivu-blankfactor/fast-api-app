@@ -1,6 +1,8 @@
 import pytest
 from sqlalchemy.orm import Session
 from uuid import uuid4
+
+from app.exceptions.exceptions import GroupNotFoundException
 from app.schemas.group import Group, GroupCreate, GroupUpdate
 
 
@@ -66,6 +68,25 @@ def test_read_group(mocker, client, mock_group, mock_group_response):
     assert str(called_args[1]) == str(mock_group.uuid)
 
 
+def test_read_group_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_get_group_service = mocker.patch(
+        "app.api.group.get_group_service",
+        side_effect=GroupNotFoundException(non_existent_uuid),
+    )
+
+    response = client.get(f"/group/{non_existent_uuid}")
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "Group not found"
+    assert "message" in result
+
+    mock_get_group_service.assert_called_once()
+
+
 def test_read_groups(mocker, client, mock_group_response):
 
     mock_get_groups_service = mocker.patch(
@@ -107,6 +128,27 @@ def test_update_group(mocker, client, mock_group, mock_group_response):
     assert called_args[2].name == "Updated Group"
 
 
+def test_update_group_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_update_group_service = mocker.patch(
+        "app.api.group.update_group_service",
+        side_effect=GroupNotFoundException(non_existent_uuid),
+    )
+
+    updated_data = {"name": "Updated Group"}
+
+    response = client.patch(f"/group/{non_existent_uuid}", json=updated_data)
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "Group not found"
+    assert "message" in result
+
+    mock_update_group_service.assert_called_once()
+
+
 def test_delete_group(mocker, client, mock_group):
 
     mock_delete_group_service = mocker.patch(
@@ -126,3 +168,22 @@ def test_delete_group(mocker, client, mock_group):
     called_args, _ = mock_delete_group_service.call_args
     assert isinstance(called_args[0], Session)
     assert str(called_args[1]) == str(mock_group.uuid)
+
+
+def test_delete_group_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_delete_group_service = mocker.patch(
+        "app.api.group.delete_group_service",
+        side_effect=GroupNotFoundException(non_existent_uuid),
+    )
+
+    response = client.delete(f"/group/{non_existent_uuid}")
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "Group not found"
+    assert "message" in result
+
+    mock_delete_group_service.assert_called_once()

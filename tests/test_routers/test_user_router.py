@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.api.user import router as user_router
+from app.exceptions.exceptions import UserNotFoundException
 from app.schemas.user import User
 from app.models.user import User as UserModel
 from app.models.group import Group
@@ -90,6 +91,25 @@ def test_read_user(mocker, client, mock_user, mock_user_response):
     assert str(called_args[1]) == str(mock_user.uuid)
 
 
+def test_read_user_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_get_user_service = mocker.patch(
+        "app.api.user.get_user_service",
+        side_effect=UserNotFoundException(non_existent_uuid),
+    )
+
+    response = client.get(f"/user/{non_existent_uuid}")
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "User not found"
+    assert "message" in result
+
+    mock_get_user_service.assert_called_once()
+
+
 def test_read_users(mocker, client, mock_user, mock_user_response):
     mock_get_users_service = mocker.patch(
         "app.api.user.get_users_service", return_value=[mock_user_response]
@@ -132,6 +152,27 @@ def test_update_user(mocker, client, mock_user, mock_user_response):
     assert called_args[2].name == "Updated User"
 
 
+def test_update_user_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_update_user_service = mocker.patch(
+        "app.api.user.update_user_service",
+        side_effect=UserNotFoundException(non_existent_uuid),
+    )
+
+    updated_data = {"name": "Updated User"}
+
+    response = client.patch(f"/user/{non_existent_uuid}", json=updated_data)
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "User not found"
+    assert "message" in result
+
+    mock_update_user_service.assert_called_once()
+
+
 def test_delete_user(mocker, client, mock_user):
 
     mock_delete_user_service = mocker.patch(
@@ -151,3 +192,22 @@ def test_delete_user(mocker, client, mock_user):
 
     assert isinstance(called_args[0], Session)
     assert str(called_args[1]) == str(mock_user.uuid)
+
+
+def test_delete_user_not_found(mocker, client):
+
+    non_existent_uuid = str(uuid4())
+
+    mock_delete_user_service = mocker.patch(
+        "app.api.user.delete_user_service",
+        side_effect=UserNotFoundException(non_existent_uuid),
+    )
+
+    response = client.delete(f"/user/{non_existent_uuid}")
+
+    assert response.status_code == 404
+    result = response.json()
+    assert result["error"] == "User not found"
+    assert "message" in result
+
+    mock_delete_user_service.assert_called_once()

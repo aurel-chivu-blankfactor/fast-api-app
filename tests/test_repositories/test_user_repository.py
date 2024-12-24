@@ -9,8 +9,7 @@ from app.repository.user import (
     update_user,
     delete_user,
 )
-from app.exceptions.group_not_found_exception import GroupNotFoundException
-from app.exceptions.user_not_found_exception import UserNotFoundException
+from app.exceptions.exceptions import UserNotFoundException, GroupNotFoundException
 from app.models.user import User
 from app.models.group import Group
 from app.schemas.user import UserCreate

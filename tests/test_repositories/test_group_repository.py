@@ -8,7 +8,7 @@ from app.repository.group import (
     update_group,
     delete_group,
 )
-from app.exceptions.group_not_found_exception import GroupNotFoundException
+from app.exceptions.exceptions import GroupNotFoundException
 from app.models.group import Group
 from app.schemas.group import GroupCreate
 
